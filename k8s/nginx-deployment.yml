@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: try-django-k8s-nginx
+spec:
+  selector:
+    matchLabels:
+      app: try-django-k8s-nginx
+  template:
+    metadata:
+      labels:
+        app: try-django-k8s-nginx
+    spec:
+      containers:
+        - name: try-django-k8s-nginx
+          image: titanventura777/try-django-k8s:nginx
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: "/app/backend/django_static"
+              name: "dj-server-nginx-vol"
+          # resources:
+          #   limits:
+          #     memory: "128Mi"
+          #     cpu: "500m"
+
+      volumes:
+        - name: dj-server-nginx-vol
+          persistentVolumeClaim:
+            claimName: dj-nginx-pvc

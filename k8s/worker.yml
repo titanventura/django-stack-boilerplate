@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: try-django-k8s-worker
+spec:
+  selector:
+    matchLabels:
+      app: try-django-k8s-worker
+  template:
+    metadata:
+      labels:
+        app: try-django-k8s-worker
+    spec:
+      containers:
+        - name: try-django-k8s-worker
+          image: titanventura777/try-django-k8s:server
+          command:
+            - "./docker/backend/worker-entrypoint.sh"
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DEBUG
+              value : "True"
+            - name: CELERY_BROKER_URL
+              value : "redis://try-django-k8s-redis-svc:6379/0"
+            - name: CELERY_RESULT_BACKEND
+              value : "redis://try-django-k8s-redis-svc:6379/0"
+            - name: DJANGO_DB
+              value : postgresql
+            - name: POSTGRES_HOST
+              value : try-django-k8s-postgres-svc
+            - name: POSTGRES_NAME
+              value : postgres
+            - name: POSTGRES_USER
+              value : postgres
+            - name: POSTGRES_PASSWORD
+              value : postgres
+            - name: POSTGRES_PORT
+              value : "5432"
+          # resources:
+          #   limits:
+          #     memory: "256Mi"
+          #     cpu: "500m"
